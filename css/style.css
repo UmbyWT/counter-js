@@ -1,0 +1,238 @@
+:root {
+  --color-zero: #26324a;
+  --color-positive: #136f63;
+  --color-negative: #9b2c3b;
+
+  --text: #fff;
+  --text-muted: rgb(255 255 255 / 0.78);
+  --surface: rgb(255 255 255 / 0.14);
+  --surface-hover: rgb(255 255 255 / 0.26);
+  --border: rgb(255 255 255 / 0.45);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', system-ui, sans-serif;
+  color: var(--text);
+  background-color: var(--color-zero);
+}
+
+noscript {
+  display: block;
+  padding: 1rem;
+  text-align: center;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: 3px;
+}
+
+
+/* Layout generale: il colore di sfondo segue il segno del valore */
+
+.counter {
+  --bg: var(--color-zero);
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  background-color: var(--bg);
+  transition: background-color 0.25s ease;
+}
+
+.counter[data-sign='positive'] {
+  --bg: var(--color-positive);
+}
+
+.counter[data-sign='negative'] {
+  --bg: var(--color-negative);
+}
+
+.counter__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+
+/* Valore */
+
+.counter__value {
+  --chars: 1;
+
+  display: block;
+  /* 0.6em è circa la larghezza di una cifra:
+     così il numero resta sempre dentro lo schermo */
+  font-size: min(15rem, 32vh, calc(88vw / (var(--chars) * 0.6)));
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.counter__value.is-up {
+  animation: bump-up 0.18s ease-out;
+}
+
+.counter__value.is-down {
+  animation: bump-down 0.18s ease-out;
+}
+
+@keyframes bump-up {
+  from {
+    transform: translateY(0.07em);
+    opacity: 0.5;
+  }
+}
+
+@keyframes bump-down {
+  from {
+    transform: translateY(-0.07em);
+    opacity: 0.5;
+  }
+}
+
+
+/* Pulsanti + e - */
+
+.counter__controls {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.counter__btn {
+  width: 5.5rem;
+  height: 5.5rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
+  background-color: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  /* evita lo zoom col doppio tap sui telefoni quando si clicca in fretta */
+  touch-action: manipulation;
+}
+
+.counter__btn:hover {
+  background-color: var(--surface-hover);
+}
+
+.counter__btn:active {
+  transform: scale(0.94);
+}
+
+
+/* Passo e azzera */
+
+.counter__options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.5rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.step__label {
+  color: var(--text-muted);
+}
+
+.step__list {
+  display: flex;
+  padding: 0.25rem;
+  background-color: var(--surface);
+  border-radius: 999px;
+}
+
+.step__btn {
+  min-width: 2.75rem;
+  height: 2.25rem;
+  padding: 0 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.step__btn:hover {
+  background-color: var(--surface);
+}
+
+.step__btn[aria-pressed='true'] {
+  color: var(--bg);
+  background-color: var(--text);
+}
+
+.counter__reset {
+  height: 2.75rem;
+  padding: 0 1.25rem;
+  font-weight: 500;
+  background: none;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  transition: background-color 0.15s ease;
+}
+
+.counter__reset:hover {
+  background-color: var(--surface);
+}
+
+.counter__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+
+/* Sui dispositivi touch la riga sulle scorciatoie da tastiera non serve */
+
+@media (hover: none) {
+  .counter__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .counter,
+  .counter__btn,
+  .step__btn,
+  .counter__reset {
+    transition: none;
+  }
+
+  .counter__value.is-up,
+  .counter__value.is-down {
+    animation: none;
+  }
+}
